@@ -11,7 +11,7 @@ app.use(cors())
 app.use(express.json())
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Todo app listening on port ${port}`)
 })
 
 app.get('/', async (req, res) => {
@@ -25,7 +25,6 @@ app.get('/tasks', async (req, res) => {
 })
 
 app.post('/tasks', async (req, res) => {
-	console.log(req.headers.host)
 	const { title, color, completed } = req.body
 	const task = await prisma.task.create({
 		data: {
@@ -39,12 +38,11 @@ app.post('/tasks', async (req, res) => {
 
 app.put('/tasks/:id', async (req, res) => {
 	const { id } = req.params
+	const { completed } = req.body
 	const task = await prisma.task.update({
-		where: { id },
+		where: { id: Number(id) },
 		data: {
-			title,
-			color,
-			completed: true
+			completed: !completed
 		}
 	})
   res.json(task)
@@ -53,7 +51,7 @@ app.put('/tasks/:id', async (req, res) => {
 app.delete('/tasks/:id', async (req, res) => {
 	const { id } = req.params
 	const task = await prisma.task.delete({
-		where: { id },
+		where: { id: Number(id) },
 	})
   res.json(task)
 })
